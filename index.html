@@ -37,7 +37,7 @@
         </header>
         <p class="settings-lead">遊びたいキャラクターを選んでください。<br />標準キャラクターを含め、合計3キャラまで登録できます。</p>
         <div id="character-list" class="character-list" aria-live="polite"></div>
-        <input id="character-file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+        <input id="character-file-input" class="visually-hidden" type="file" accept="image/*" />
         <p class="privacy-note">写真はこの端末の中だけに保存され、外部へ送信されません。</p>
       </section>
 
@@ -124,7 +124,7 @@
         <h2>キャラクターの名前</h2>
         <label class="name-label" for="character-name-input">呼び名を入力してください</label>
         <input id="character-name-input" class="name-input" type="text" maxlength="12" autocomplete="off" />
-        <button id="save-character-button" class="primary-button">登録する</button>
+        <button id="save-character-button" class="primary-button" type="button">登録する</button>
       </dialog>
     </main>
     <script src="./game.js"></script>

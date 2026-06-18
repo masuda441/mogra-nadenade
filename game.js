@@ -48,7 +48,7 @@ let acceptingStroke = false;
 let installPrompt = null;
 let pendingCharacterImage = null;
 let characters = loadCharacters();
-let selectedCharacterId = localStorage.getItem(SELECTED_CHARACTER_KEY) || "default";
+let selectedCharacterId = getStoredValue(SELECTED_CHARACTER_KEY) || "default";
 
 if (!characters.some((character) => character.id === selectedCharacterId)) {
   selectedCharacterId = "default";
@@ -60,9 +60,26 @@ function showScreen(name) {
   });
 }
 
+function getStoredValue(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function setStoredValue(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function loadCharacters() {
   try {
-    const saved = JSON.parse(localStorage.getItem(CHARACTER_STORAGE_KEY) || "[]");
+    const saved = JSON.parse(getStoredValue(CHARACTER_STORAGE_KEY) || "[]");
     return [DEFAULT_CHARACTER, ...saved.filter((character) => character?.id && character?.image).slice(0, MAX_CHARACTERS - 1)];
   } catch {
     return [DEFAULT_CHARACTER];
@@ -71,7 +88,9 @@ function loadCharacters() {
 
 function saveCharacters() {
   const customCharacters = characters.filter((character) => character.custom);
-  localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(customCharacters));
+  if (!setStoredValue(CHARACTER_STORAGE_KEY, JSON.stringify(customCharacters))) {
+    throw new Error("character-storage-failed");
+  }
 }
 
 function getSelectedCharacter() {
@@ -98,7 +117,7 @@ function applySelectedCharacter() {
 
 function selectCharacter(id) {
   selectedCharacterId = id;
-  localStorage.setItem(SELECTED_CHARACTER_KEY, id);
+  setStoredValue(SELECTED_CHARACTER_KEY, id);
   applySelectedCharacter();
   renderCharacterSettings();
 }
@@ -106,7 +125,7 @@ function selectCharacter(id) {
 function deleteCharacter(id) {
   characters = characters.filter((character) => character.id !== id);
   if (selectedCharacterId === id) selectedCharacterId = "default";
-  localStorage.setItem(SELECTED_CHARACTER_KEY, selectedCharacterId);
+  setStoredValue(SELECTED_CHARACTER_KEY, selectedCharacterId);
   saveCharacters();
   applySelectedCharacter();
   renderCharacterSettings();
@@ -161,37 +180,67 @@ function renderCharacterSettings() {
   });
 
   if (characters.length < MAX_CHARACTERS) {
-    const add = document.createElement("button");
+    const add = document.createElement("label");
     add.className = "add-character";
+    add.htmlFor = "character-file-input";
+    add.tabIndex = 0;
+    add.setAttribute("role", "button");
     add.textContent = "＋ 顔写真を登録する";
-    add.addEventListener("click", () => characterFileInput.click());
+    add.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        characterFileInput.click();
+      }
+    });
     characterList.appendChild(add);
   }
 }
 
-function resizePhoto(file) {
+function loadPhoto(file) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => {
-      const image = new Image();
-      image.onerror = reject;
-      image.onload = () => {
-        const size = 480;
-        const canvas = document.createElement("canvas");
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext("2d");
-        const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
-        const sourceX = (image.naturalWidth - sourceSize) / 2;
-        const sourceY = (image.naturalHeight - sourceSize) / 2;
-        context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
-        resolve(canvas.toDataURL("image/jpeg", .82));
-      };
-      image.src = reader.result;
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
     };
-    reader.readAsDataURL(file);
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("image-load-failed"));
+    };
+    image.src = objectUrl;
   });
+}
+
+async function resizePhoto(file) {
+  const image = await loadPhoto(file);
+  const size = 360;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("canvas-unavailable");
+  const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+  const sourceX = (image.naturalWidth - sourceSize) / 2;
+  const sourceY = (image.naturalHeight - sourceSize) / 2;
+  context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+  return canvas.toDataURL("image/jpeg", .76);
+}
+
+function openDialog(dialogElement) {
+  if (typeof dialogElement.showModal === "function") {
+    dialogElement.showModal();
+  } else {
+    dialogElement.setAttribute("open", "");
+  }
+}
+
+function closeDialog(dialogElement) {
+  if (typeof dialogElement.close === "function") {
+    dialogElement.close();
+  } else {
+    dialogElement.removeAttribute("open");
+  }
 }
 
 function startGame() {
@@ -357,10 +406,10 @@ document.querySelector("#home-button").addEventListener("click", goHome);
 document.querySelector("#result-home-button").addEventListener("click", goHome);
 
 const dialog = document.querySelector("#howto-dialog");
-document.querySelector("#howto-button").addEventListener("click", () => dialog.showModal());
-document.querySelector("#close-dialog").addEventListener("click", () => dialog.close());
+document.querySelector("#howto-button").addEventListener("click", () => openDialog(dialog));
+document.querySelector("#close-dialog").addEventListener("click", () => closeDialog(dialog));
 document.querySelector("#dialog-start").addEventListener("click", () => {
-  dialog.close();
+  closeDialog(dialog);
   startGame();
 });
 
@@ -372,7 +421,7 @@ characterFileInput.addEventListener("change", async () => {
   try {
     pendingCharacterImage = await resizePhoto(file);
     characterNameInput.value = `キャラ${characters.length}`;
-    characterNameDialog.showModal();
+    openDialog(characterNameDialog);
     characterNameInput.focus();
     characterNameInput.select();
   } catch {
@@ -382,7 +431,7 @@ characterFileInput.addEventListener("change", async () => {
 
 document.querySelector("#close-name-dialog").addEventListener("click", () => {
   pendingCharacterImage = null;
-  characterNameDialog.close();
+  closeDialog(characterNameDialog);
 });
 
 document.querySelector("#save-character-button").addEventListener("click", () => {
@@ -402,7 +451,7 @@ document.querySelector("#save-character-button").addEventListener("click", () =>
     return;
   }
   pendingCharacterImage = null;
-  characterNameDialog.close();
+  closeDialog(characterNameDialog);
   selectCharacter(character.id);
 });
 
