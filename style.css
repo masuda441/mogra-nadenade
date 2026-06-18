@@ -103,6 +103,19 @@ h1 span { color: var(--orange); }
   cursor: pointer;
 }
 
+.settings-button {
+  width: min(100%, 430px);
+  min-height: 58px;
+  margin-top: 18px;
+  border: 2px solid #d9ccb5;
+  border-radius: 19px;
+  color: var(--ink);
+  background: #fffdf6;
+  font-size: clamp(18px, 4.5vw, 22px);
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .text-button {
   margin-top: 22px;
   padding: 12px 20px;
@@ -113,6 +126,156 @@ h1 span { color: var(--orange); }
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.settings-screen {
+  background: var(--cream);
+}
+
+.settings-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-header h2 {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(24px, 6vw, 34px);
+}
+
+.settings-lead {
+  margin: 28px auto 22px;
+  text-align: center;
+  font-size: clamp(17px, 4vw, 21px);
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.character-list {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 500px);
+  margin: 0 auto;
+}
+
+.character-card {
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  min-height: 116px;
+  padding: 12px 14px;
+  border: 3px solid #e1d5bf;
+  border-radius: 24px;
+  background: #fffdf7;
+}
+
+.character-card.selected {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px #79ad6528;
+}
+
+.character-preview {
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #f3ead8;
+}
+
+.character-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.character-preview img.user-character {
+  object-fit: cover;
+  border: 5px solid #f5a000;
+  border-radius: 50%;
+}
+
+.character-info strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 22px;
+}
+
+.selected-label {
+  color: var(--deep-green);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.character-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.select-character, .delete-character, .add-character {
+  min-height: 46px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.select-character {
+  border: 0;
+  color: white;
+  background: var(--green);
+}
+
+.delete-character {
+  border: 2px solid #d8b6ac;
+  color: #8b463b;
+  background: white;
+}
+
+.add-character {
+  width: min(100%, 500px);
+  min-height: 72px;
+  margin: 4px auto 0;
+  border: 3px dashed var(--green);
+  color: var(--deep-green);
+  background: #f9fff4;
+  font-size: 20px;
+}
+
+.privacy-note {
+  width: min(100%, 500px);
+  margin: 24px auto 0;
+  padding: 15px;
+  border-radius: 16px;
+  color: #65564c;
+  background: #eee5d4;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.name-label {
+  display: block;
+  margin: 20px 0 8px;
+  text-align: left;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.name-input {
+  width: 100%;
+  height: 58px;
+  margin-bottom: 24px;
+  padding: 8px 14px;
+  border: 3px solid #d9ccb5;
+  border-radius: 15px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+  font-size: 22px;
 }
 
 .title-mole {
@@ -126,6 +289,14 @@ h1 span { color: var(--orange); }
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 8px 2px #3d312a28);
+}
+
+.title-mole img.user-character,
+.mole-head img.user-character {
+  object-fit: cover;
+  border: clamp(5px, 1vw, 9px) solid #f5a000;
+  border-radius: 50%;
+  background: #fff;
 }
 
 .game-screen {

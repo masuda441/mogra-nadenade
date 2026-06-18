@@ -25,7 +25,20 @@
         <p class="intro">モグラの頭を指で<br />左右になでてあげましょう</p>
         <button id="start-button" class="primary-button">モグラに会いに行く</button>
         <button id="install-button" class="install-button" hidden>ホーム画面に追加</button>
+        <button id="settings-button" class="settings-button">⚙ キャラクター設定</button>
         <button id="howto-button" class="text-button">遊びかたを見る</button>
+      </section>
+
+      <section id="settings-screen" class="screen settings-screen" hidden>
+        <header class="settings-header">
+          <button id="settings-back-button" class="icon-button" aria-label="最初の画面に戻る">‹</button>
+          <h2>キャラクター設定</h2>
+          <span aria-hidden="true"></span>
+        </header>
+        <p class="settings-lead">遊びたいキャラクターを選んでください。<br />標準モグラを含め、合計3キャラまで登録できます。</p>
+        <div id="character-list" class="character-list" aria-live="polite"></div>
+        <input id="character-file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+        <p class="privacy-note">写真はこの端末の中だけに保存され、外部へ送信されません。</p>
       </section>
 
       <section id="game-screen" class="screen game-screen" hidden>
@@ -104,6 +117,14 @@
         <p>モグラが顔を出したら、頭の上で指をゆっくり左右に動かします。</p>
         <p>じょうずになでると、モグラが笑顔になります。失敗やゲームオーバーはありません。</p>
         <button id="dialog-start" class="primary-button">やってみる</button>
+      </dialog>
+
+      <dialog id="character-name-dialog">
+        <button id="close-name-dialog" class="dialog-close" aria-label="閉じる">×</button>
+        <h2>キャラクターの名前</h2>
+        <label class="name-label" for="character-name-input">呼び名を入力してください</label>
+        <input id="character-name-input" class="name-input" type="text" maxlength="12" autocomplete="off" />
+        <button id="save-character-button" class="primary-button">登録する</button>
       </dialog>
     </main>
     <script src="./game.js"></script>

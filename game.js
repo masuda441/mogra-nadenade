@@ -1,5 +1,6 @@
 const screens = {
   start: document.querySelector("#start-screen"),
+  settings: document.querySelector("#settings-screen"),
   game: document.querySelector("#game-screen"),
   result: document.querySelector("#result-screen"),
 };
@@ -13,6 +14,21 @@ const flowers = document.querySelector("#flowers");
 const moles = [...document.querySelectorAll("[data-mole]")];
 const heads = [...document.querySelectorAll("[data-head]")];
 const installButton = document.querySelector("#install-button");
+const characterList = document.querySelector("#character-list");
+const characterFileInput = document.querySelector("#character-file-input");
+const characterNameDialog = document.querySelector("#character-name-dialog");
+const characterNameInput = document.querySelector("#character-name-input");
+const characterImages = [...document.querySelectorAll(".title-mole img, [data-head] img")];
+
+const DEFAULT_CHARACTER = {
+  id: "default",
+  name: "モグラ",
+  image: "./assets/mole-v2.png",
+  custom: false,
+};
+const CHARACTER_STORAGE_KEY = "mogra-nadenade-characters";
+const SELECTED_CHARACTER_KEY = "mogra-nadenade-selected-character";
+const MAX_CHARACTERS = 3;
 
 let score = 0;
 let activeIndex = -1;
@@ -22,10 +38,142 @@ let audioContext = null;
 let stroke = null;
 let acceptingStroke = false;
 let installPrompt = null;
+let pendingCharacterImage = null;
+let characters = loadCharacters();
+let selectedCharacterId = localStorage.getItem(SELECTED_CHARACTER_KEY) || "default";
+
+if (!characters.some((character) => character.id === selectedCharacterId)) {
+  selectedCharacterId = "default";
+}
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, screen]) => {
     screen.hidden = key !== name;
+  });
+}
+
+function loadCharacters() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CHARACTER_STORAGE_KEY) || "[]");
+    return [DEFAULT_CHARACTER, ...saved.filter((character) => character?.id && character?.image).slice(0, MAX_CHARACTERS - 1)];
+  } catch {
+    return [DEFAULT_CHARACTER];
+  }
+}
+
+function saveCharacters() {
+  const customCharacters = characters.filter((character) => character.custom);
+  localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(customCharacters));
+}
+
+function getSelectedCharacter() {
+  return characters.find((character) => character.id === selectedCharacterId) || DEFAULT_CHARACTER;
+}
+
+function applySelectedCharacter() {
+  const character = getSelectedCharacter();
+  characterImages.forEach((image) => {
+    image.src = character.image;
+    image.classList.toggle("user-character", character.custom);
+    if (image.alt) image.alt = `${character.name}のキャラクター`;
+  });
+}
+
+function selectCharacter(id) {
+  selectedCharacterId = id;
+  localStorage.setItem(SELECTED_CHARACTER_KEY, id);
+  applySelectedCharacter();
+  renderCharacterSettings();
+}
+
+function deleteCharacter(id) {
+  characters = characters.filter((character) => character.id !== id);
+  if (selectedCharacterId === id) selectedCharacterId = "default";
+  localStorage.setItem(SELECTED_CHARACTER_KEY, selectedCharacterId);
+  saveCharacters();
+  applySelectedCharacter();
+  renderCharacterSettings();
+}
+
+function renderCharacterSettings() {
+  characterList.innerHTML = "";
+
+  characters.forEach((character) => {
+    const card = document.createElement("article");
+    card.className = `character-card${character.id === selectedCharacterId ? " selected" : ""}`;
+
+    const preview = document.createElement("div");
+    preview.className = "character-preview";
+    const image = document.createElement("img");
+    image.src = character.image;
+    image.alt = `${character.name}のプレビュー`;
+    image.classList.toggle("user-character", character.custom);
+    preview.appendChild(image);
+
+    const info = document.createElement("div");
+    info.className = "character-info";
+    const name = document.createElement("strong");
+    name.textContent = character.name;
+    info.appendChild(name);
+    if (character.id === selectedCharacterId) {
+      const selected = document.createElement("span");
+      selected.className = "selected-label";
+      selected.textContent = "選択中";
+      info.appendChild(selected);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "character-actions";
+    if (character.id !== selectedCharacterId) {
+      const select = document.createElement("button");
+      select.className = "select-character";
+      select.textContent = "選ぶ";
+      select.addEventListener("click", () => selectCharacter(character.id));
+      actions.appendChild(select);
+    }
+    if (character.custom) {
+      const remove = document.createElement("button");
+      remove.className = "delete-character";
+      remove.textContent = "削除";
+      remove.addEventListener("click", () => deleteCharacter(character.id));
+      actions.appendChild(remove);
+    }
+
+    card.append(preview, info, actions);
+    characterList.appendChild(card);
+  });
+
+  if (characters.length < MAX_CHARACTERS) {
+    const add = document.createElement("button");
+    add.className = "add-character";
+    add.textContent = "＋ 顔写真を登録する";
+    add.addEventListener("click", () => characterFileInput.click());
+    characterList.appendChild(add);
+  }
+}
+
+function resizePhoto(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = reject;
+      image.onload = () => {
+        const size = 480;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext("2d");
+        const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+        const sourceX = (image.naturalWidth - sourceSize) / 2;
+        const sourceY = (image.naturalHeight - sourceSize) / 2;
+        context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+        resolve(canvas.toDataURL("image/jpeg", .82));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
   });
 }
 
@@ -181,6 +329,11 @@ heads.forEach((head, index) => {
 });
 
 document.querySelector("#start-button").addEventListener("click", startGame);
+document.querySelector("#settings-button").addEventListener("click", () => {
+  renderCharacterSettings();
+  showScreen("settings");
+});
+document.querySelector("#settings-back-button").addEventListener("click", goHome);
 document.querySelector("#again-button").addEventListener("click", startGame);
 document.querySelector("#finish-button").addEventListener("click", finishGame);
 document.querySelector("#home-button").addEventListener("click", goHome);
@@ -192,6 +345,48 @@ document.querySelector("#close-dialog").addEventListener("click", () => dialog.c
 document.querySelector("#dialog-start").addEventListener("click", () => {
   dialog.close();
   startGame();
+});
+
+characterFileInput.addEventListener("change", async () => {
+  const [file] = characterFileInput.files;
+  characterFileInput.value = "";
+  if (!file || characters.length >= MAX_CHARACTERS) return;
+
+  try {
+    pendingCharacterImage = await resizePhoto(file);
+    characterNameInput.value = `キャラ${characters.length}`;
+    characterNameDialog.showModal();
+    characterNameInput.focus();
+    characterNameInput.select();
+  } catch {
+    alert("写真を読み込めませんでした。別の写真をお試しください。");
+  }
+});
+
+document.querySelector("#close-name-dialog").addEventListener("click", () => {
+  pendingCharacterImage = null;
+  characterNameDialog.close();
+});
+
+document.querySelector("#save-character-button").addEventListener("click", () => {
+  if (!pendingCharacterImage || characters.length >= MAX_CHARACTERS) return;
+  const character = {
+    id: `photo-${Date.now()}`,
+    name: characterNameInput.value.trim() || `キャラ${characters.length}`,
+    image: pendingCharacterImage,
+    custom: true,
+  };
+  characters.push(character);
+  try {
+    saveCharacters();
+  } catch {
+    characters.pop();
+    alert("写真を保存できませんでした。端末の空き容量をご確認ください。");
+    return;
+  }
+  pendingCharacterImage = null;
+  characterNameDialog.close();
+  selectCharacter(character.id);
 });
 
 document.querySelector("#sound-button").addEventListener("click", (event) => {
@@ -226,3 +421,5 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
     navigator.serviceWorker.register("./sw.js");
   });
 }
+
+applySelectedCharacter();
