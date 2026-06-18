@@ -1,4 +1,4 @@
-const CACHE_NAME = "mogra-nadenade-v4";
+const CACHE_NAME = "mogra-nadenade-v5";
 const APP_FILES = [
   "./",
   "./index.html",

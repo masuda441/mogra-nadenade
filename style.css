@@ -363,13 +363,25 @@ h1 span { color: var(--orange); }
 }
 
 .mole-spot { position: relative; width: 31%; max-width: 175px; height: 270px; }
-.hole { position: absolute; bottom: 0; left: 3%; width: 94%; height: 43px; border-radius: 50%; background: #5d493a; box-shadow: inset 0 8px 0 #3d312a; }
+.hole {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 42px;
+  border-radius: 50%;
+  background: #4c3a30;
+  box-shadow:
+    inset 0 9px 0 #2f2824,
+    0 7px 8px #3d312a42;
+}
 .mole {
   position: absolute;
   z-index: 2;
-  left: 0;
-  bottom: 12px;
-  width: 100%;
+  left: 10%;
+  bottom: 9px;
+  width: 80%;
   height: auto;
   aspect-ratio: 1 / 1;
   transform-origin: bottom;
@@ -455,8 +467,8 @@ dialog p { font-size: 19px; line-height: 1.7; text-align: left; }
 .dialog-close { position: absolute; top: 12px; right: 14px; width: 48px; height: 48px; border: 0; border-radius: 50%; background: #eee4d3; font-size: 30px; cursor: pointer; }
 .howto-icon { margin: 16px; color: var(--orange); font-size: 48px; font-weight: 800; }
 
-@keyframes pop-up { from { transform: translateY(190px) scale(.85); } to { transform: translateY(0) scale(1); } }
-@keyframes pop-down { to { transform: translateY(200px) scale(.85); } }
+@keyframes pop-up { from { transform: translateY(125%) scale(.9); } to { transform: translateY(0) scale(1); } }
+@keyframes pop-down { to { transform: translateY(125%) scale(.9); } }
 @keyframes happy-bounce { 50% { transform: translateY(-14px) rotate(-2deg); } }
 @keyframes heart-float { 30% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0; transform: translateY(-70px) scale(.8); } }
 @keyframes hint-move { 50% { transform: translateX(12px); } }
