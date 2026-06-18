@@ -65,7 +65,8 @@ h1 {
   letter-spacing: .04em;
 }
 
-h1 span { color: var(--orange); }
+h1 > span { color: var(--orange); }
+h1 .title-character-name { color: var(--ink); }
 
 .intro {
   margin: 28px 0;

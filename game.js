@@ -19,6 +19,7 @@ const characterFileInput = document.querySelector("#character-file-input");
 const characterNameDialog = document.querySelector("#character-name-dialog");
 const characterNameInput = document.querySelector("#character-name-input");
 const characterImages = [...document.querySelectorAll(".title-mole img, [data-head] img")];
+const titleCharacterName = document.querySelector("#title-character-name");
 
 const DEFAULT_CHARACTER = {
   id: "default",
@@ -72,6 +73,8 @@ function getSelectedCharacter() {
 
 function applySelectedCharacter() {
   const character = getSelectedCharacter();
+  titleCharacterName.textContent = character.name;
+  document.title = `${character.name}ナデナデ`;
   characterImages.forEach((image) => {
     image.src = character.image;
     image.classList.toggle("user-character", character.custom);
