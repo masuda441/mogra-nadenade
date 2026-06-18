@@ -60,7 +60,7 @@ button { font: inherit; }
 
 h1 {
   margin: 0;
-  font-size: clamp(52px, 14vw, 82px);
+  font-size: clamp(36px, 9.8vw, 57px);
   line-height: .93;
   letter-spacing: .04em;
 }
