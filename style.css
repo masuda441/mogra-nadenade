@@ -69,7 +69,7 @@ h1 span { color: var(--orange); }
 
 .intro {
   margin: 28px 0;
-  font-size: clamp(20px, 5vw, 27px);
+  font-size: clamp(16px, 4vw, 21px);
   font-weight: 700;
   line-height: 1.65;
 }
