@@ -258,7 +258,7 @@ function completeStroke() {
     nextTimer = setTimeout(() => {
       mole.hidden = true;
       mole.classList.remove("leaving", "mole-happy");
-      messageElement.textContent = "つぎのモグラはどこかな";
+      messageElement.textContent = `つぎの${getSelectedCharacter().name}はどこかな？`;
       nextTimer = setTimeout(showMole, 650);
     }, 520);
   }, 1100);
