@@ -367,7 +367,8 @@ h1 span { color: var(--orange); }
   width: 31%;
   max-width: 175px;
   height: 270px;
-  overflow: hidden;
+  overflow: visible;
+  clip-path: inset(-200px -100% 0 -100%);
 }
 .hole {
   position: absolute;
@@ -397,9 +398,9 @@ h1 span { color: var(--orange); }
 .mole {
   position: absolute;
   z-index: 2;
-  left: 10%;
+  left: -30%;
   bottom: -10px;
-  width: 80%;
+  width: 160%;
   height: auto;
   aspect-ratio: 1 / 1;
   transform-origin: bottom;
