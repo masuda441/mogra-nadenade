@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff8e7" />
+    <meta name="description" content="モグラの頭をやさしくなでて楽しむ、シニア向けブラウザゲームです。" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="モグラナデナデ" />
+    <title>モグラナデナデ</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/icon-192.png" />
+    <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="start-screen" class="screen start-screen">
+        <div class="title-mole" aria-hidden="true">
+          <img src="./assets/mole-v2.png" alt="" />
+        </div>
+        <p class="eyebrow">やさしく、ゆっくり</p>
+        <h1>モグラ<br /><span>ナデナデ</span></h1>
+        <p class="intro">モグラの頭を指で<br />左右になでてあげましょう</p>
+        <button id="start-button" class="primary-button">モグラに会いに行く</button>
+        <button id="install-button" class="install-button" hidden>ホーム画面に追加</button>
+        <button id="howto-button" class="text-button">遊びかたを見る</button>
+      </section>
+
+      <section id="game-screen" class="screen game-screen" hidden>
+        <header class="game-header">
+          <button id="home-button" class="icon-button" aria-label="最初の画面に戻る">⌂</button>
+          <div class="counter" aria-live="polite">
+            <span>ありがとう</span>
+            <strong id="score">0</strong><small>こ</small>
+          </div>
+          <button id="sound-button" class="icon-button" aria-label="音を切る" aria-pressed="true">♪</button>
+        </header>
+
+        <div class="message-wrap">
+          <p id="message" class="message" aria-live="polite">モグラが出てくるよ</p>
+          <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        </div>
+
+        <section class="garden" aria-label="モグラのお庭">
+          <div class="sun" aria-hidden="true"></div>
+          <div class="cloud cloud-one" aria-hidden="true"></div>
+          <div class="cloud cloud-two" aria-hidden="true"></div>
+          <div id="flowers" class="flowers" aria-hidden="true"></div>
+
+          <div class="hole-row">
+            <div class="mole-spot" data-spot="0">
+              <div class="mole" data-mole hidden>
+                <div class="mole-head" data-head>
+                  <img src="./assets/mole-v2.png" alt="にっこり笑うモグラ" draggable="false" />
+                  <div class="heart">♥</div>
+                </div>
+              </div>
+              <div class="hole"></div>
+            </div>
+            <div class="mole-spot" data-spot="1">
+              <div class="mole" data-mole hidden>
+                <div class="mole-head" data-head>
+                  <img src="./assets/mole-v2.png" alt="にっこり笑うモグラ" draggable="false" />
+                  <div class="heart">♥</div>
+                </div>
+              </div>
+              <div class="hole"></div>
+            </div>
+            <div class="mole-spot" data-spot="2">
+              <div class="mole" data-mole hidden>
+                <div class="mole-head" data-head>
+                  <img src="./assets/mole-v2.png" alt="にっこり笑うモグラ" draggable="false" />
+                  <div class="heart">♥</div>
+                </div>
+              </div>
+              <div class="hole"></div>
+            </div>
+          </div>
+          <p class="gesture-hint"><span>↔</span> 頭をゆっくり左右になでてね</p>
+        </section>
+
+        <button id="finish-button" class="finish-button">今日はここまで</button>
+      </section>
+
+      <section id="result-screen" class="screen result-screen" hidden>
+        <div class="result-sun" aria-hidden="true">☀</div>
+        <p class="eyebrow">おつかれさまでした</p>
+        <h2>今日もたくさん<br />手を動かしました</h2>
+        <div class="result-card">
+          <span>もらった「ありがとう」</span>
+          <strong id="final-score">0</strong><small>こ</small>
+        </div>
+        <p id="result-message" class="result-message"></p>
+        <button id="again-button" class="primary-button">もう一度あそぶ</button>
+        <button id="result-home-button" class="text-button">最初の画面へ</button>
+      </section>
+
+      <dialog id="howto-dialog">
+        <button id="close-dialog" class="dialog-close" aria-label="閉じる">×</button>
+        <h2>遊びかた</h2>
+        <div class="howto-icon" aria-hidden="true">☝ ↔</div>
+        <p>モグラが顔を出したら、頭の上で指をゆっくり左右に動かします。</p>
+        <p>じょうずになでると、モグラが笑顔になります。失敗やゲームオーバーはありません。</p>
+        <button id="dialog-start" class="primary-button">やってみる</button>
+      </dialog>
+    </main>
+    <script src="./game.js"></script>
+  </body>
+</html>
