@@ -398,7 +398,7 @@ h1 span { color: var(--orange); }
   position: absolute;
   z-index: 2;
   left: 10%;
-  bottom: -24px;
+  bottom: -10px;
   width: 80%;
   height: auto;
   aspect-ratio: 1 / 1;
