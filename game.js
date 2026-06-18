@@ -20,6 +20,13 @@ const characterNameDialog = document.querySelector("#character-name-dialog");
 const characterNameInput = document.querySelector("#character-name-input");
 const characterImages = [...document.querySelectorAll(".title-mole img, [data-head] img")];
 const titleCharacterName = document.querySelector("#title-character-name");
+const introCharacterName = document.querySelector("#intro-character-name");
+const howtoCharacterName = document.querySelector("#howto-character-name");
+const howtoCharacterNameSecond = document.querySelector("#howto-character-name-second");
+const startButton = document.querySelector("#start-button");
+const garden = document.querySelector("#garden");
+const descriptionMeta = document.querySelector('meta[name="description"]');
+const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
 
 const DEFAULT_CHARACTER = {
   id: "default",
@@ -74,6 +81,13 @@ function getSelectedCharacter() {
 function applySelectedCharacter() {
   const character = getSelectedCharacter();
   titleCharacterName.textContent = character.name;
+  introCharacterName.textContent = character.name;
+  howtoCharacterName.textContent = character.name;
+  howtoCharacterNameSecond.textContent = character.name;
+  startButton.textContent = `${character.name}に会いに行く`;
+  garden.setAttribute("aria-label", `${character.name}のお庭`);
+  descriptionMeta.content = `${character.name}の頭をやさしくなでて楽しむ、シニア向けブラウザゲームです。`;
+  appleTitleMeta.content = `${character.name}ナデナデ`;
   document.title = `${character.name}ナデナデ`;
   characterImages.forEach((image) => {
     image.src = character.image;
@@ -187,7 +201,7 @@ function startGame() {
   scoreElement.textContent = "0";
   flowers.innerHTML = "";
   progressBar.style.width = "0%";
-  messageElement.textContent = "モグラが出てくるよ";
+  messageElement.textContent = `${getSelectedCharacter().name}が出てくるよ`;
   moles.forEach((mole) => {
     mole.hidden = true;
     mole.classList.remove("leaving", "mole-happy");
@@ -280,7 +294,7 @@ function finishGame() {
   resultMessage.textContent = score === 0
     ? "会いに来てくれて、ありがとう"
     : score < 4
-      ? "モグラたちが喜んでいます"
+      ? `${getSelectedCharacter().name}が喜んでいます`
       : "お庭が笑顔でいっぱいになりました";
   showScreen("result");
   playTone(523, .12, "sine", 0);
@@ -331,7 +345,7 @@ heads.forEach((head, index) => {
   head.addEventListener("pointercancel", endStroke);
 });
 
-document.querySelector("#start-button").addEventListener("click", startGame);
+startButton.addEventListener("click", startGame);
 document.querySelector("#settings-button").addEventListener("click", () => {
   renderCharacterSettings();
   showScreen("settings");
