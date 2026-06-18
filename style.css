@@ -414,9 +414,9 @@ h1 .title-character-name { color: var(--ink); }
 .mole {
   position: absolute;
   z-index: 2;
-  left: -6%;
-  bottom: -10px;
-  width: 112%;
+  left: 5%;
+  bottom: -34px;
+  width: 90%;
   height: auto;
   aspect-ratio: .78 / 1;
   transform-origin: bottom;
